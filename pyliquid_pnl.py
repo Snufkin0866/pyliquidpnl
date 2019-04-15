@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 
+import os
 import traceback
 import requests
 import pandas as pd
@@ -41,6 +42,8 @@ class CollateralSaver(object):
                  'USD': False, 'QASH': False}):
         self.funding_currencies = funding_currencies
         self.data_dir = file_dir
+        if not os.path.exists(file_dir + "/data"):
+            os.mkdir(file_dir + "/data")
         self.db_path = file_dir + "/data/collateral.db"
         self.conn = sqlite3.connect(self.db_path)
         self.cur = self.conn.cursor()
