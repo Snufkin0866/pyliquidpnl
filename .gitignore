@@ -1,0 +1,8 @@
+./_pycache_
+*.png
+*.csv
+*.log
+*.db
+config.py
+pyliquid.py
+*.pyc
