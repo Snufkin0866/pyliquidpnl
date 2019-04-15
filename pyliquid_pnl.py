@@ -82,6 +82,8 @@ class CollateralSaver(object):
         margin = 0
         free_margin = 0
         for a in accounts:
+            if a['funding_currency'] not in self.funding_currencies:
+                continue
             if self.funding_currencies[a['funding_currency']]:
                 if a['funding_currency'] == 'JPY':
                     present_price = 1
