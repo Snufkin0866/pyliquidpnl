@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from time import sleep
 import sqlite3
 import sys
+from collections import defaultdict
 args = sys.argv
 if args[1] == 'send_discord':
     import matplotlib
@@ -18,6 +19,8 @@ from matplotlib import pyplot as plt
 import os
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
+import seaborn as sns
+sns.set()
 
 import pyliquid
 import config
@@ -37,8 +40,8 @@ logger.addHandler(handler2)
 class CollateralSaver(object):
 
     def __init__(self, key, secret, file_dir,
-                 funding_currencies={'JPY': True, 'BTC': False, 'ETH': False,
-                 'USD': False, 'QASH': False}):
+                 funding_currencies=defaultdict(bool, {'JPY': True, 'BTC': False, 'ETH': False,
+                 'USD': False, 'QASH': False})):
         self.funding_currencies = funding_currencies
         self.data_dir = file_dir
         self.db_path = file_dir + "/data/collateral.db"
@@ -112,10 +115,10 @@ class CollateralSaver(object):
                     [0], color='r', label='total_unrealized_pnl')
             ax0.plot(data_df.index, data_df['total_margin'] -
                     data_df['total_margin'][0], color='b', label='total_realized_pnl')
-            ax0.legend()
+            ax0.legend(loc='upper right')
             ax1 = ax0.twinx()
             ax1.plot(data_df.index, data_df['open_pnl'], color='y', label='open_position_pnl')
-            ax1.legend()
+            ax1.legend(loc='lower right')
         else:
             ax0 = plt.subplot(111)
             ax0.plot(data_df.index, data_df['total_unrealized_margin'] - data_df['total_realized_margin']
@@ -153,6 +156,11 @@ class CollateralSaver(object):
         plt.close()
         return path, pl_now
 
+    def send_total_pl(self, WEBHOOK_URL, since):
+        path, pl_now = self.save_graph(since=since)
+        payload = {'content': f'PL now({str(datetime.now())}): {pl_now}'}
+        requests.post(WEBHOOK_URL, data=payload)
+
     def send_to_discord(self, WEBHOOK_URL, since):
         path, pl_now = self.save_graph(since=since)
         payload = {'file': (path, open(path, 'rb'), "image/png")}
@@ -161,8 +169,9 @@ class CollateralSaver(object):
 
 
 if __name__ == '__main__':
+    contest_start = config.CONTEST_START
     WEBHOOK_URL = config.WEBHOOK_URL
-    funding_currencies = config.funding_currencies
+    funding_currencies = config.FUNDING_CURRENCIES
     key = config.KEY
     secret = config.SECRET
     file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -176,6 +185,7 @@ if __name__ == '__main__':
         saver.describe_continually(30)
     if args[1] == 'send_discord':
         saver.send_to_discord(WEBHOOK_URL, since=TODAY)
+        saver.send_total_pl(WEBHOOK_URL, contest_start)
     if args[1] == 'today':
         fig = plt.figure(figsize=(16, 8))
         data_df = saver.get_df_from_db(start_dt=TODAY)
