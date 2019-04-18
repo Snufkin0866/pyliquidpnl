@@ -163,7 +163,7 @@ class CollateralSaver(object):
 
     def send_total_pl(self, WEBHOOK_URL, since):
         path, pl_now = self.save_graph(since=since)
-        payload = {'content': f'PL now({str(datetime.now())}): {pl_now}'}
+        payload = {'content': f'PL now({str(datetime.now(timezone("Asia/Tokyo")))}): {pl_now}'}
         requests.post(WEBHOOK_URL, data=payload)
 
     def send_to_discord(self, WEBHOOK_URL, since):
