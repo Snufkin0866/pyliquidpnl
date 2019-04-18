@@ -100,7 +100,7 @@ class CollateralSaver(object):
         return date, open_pnl, total_unrealized_margin, total_margin
 
     def describe_continually(self, interval):
-        today = datetime.now().date() - timedelta(days=3)
+        today = datetime.now(timezone('Asia/Tokyo')).date() - timedelta(days=3)
         while True:
             logger.info('Redescribing.')
             df = self.get_df_from_db(start_dt=timezone('Asia/Tokyo').localize(
@@ -163,7 +163,7 @@ class CollateralSaver(object):
 
     def send_total_pl(self, WEBHOOK_URL, since):
         path, pl_now = self.save_graph(since=since)
-        payload = {'content': f'PL now({str(datetime.now())}): {pl_now}'}
+        payload = {'content': f'PL now({str(datetime.now(timezone("Asia/Tokyo")))}): {pl_now}'}
         requests.post(WEBHOOK_URL, data=payload)
 
     def send_to_discord(self, WEBHOOK_URL, since):
@@ -181,7 +181,7 @@ if __name__ == '__main__':
     secret = config.SECRET
     file_dir = os.path.dirname(os.path.abspath(__file__))
     saver = CollateralSaver(key, secret, file_dir, funding_currencies=funding_currencies)
-    today = datetime.now().date()
+    today = datetime.now(timezone('Asia/Tokyo')).date()
     TODAY = timezone('Asia/Tokyo').localize(
         datetime(year=today.year, month=today.month, day=today.day, hour=0, minute=0))
     if args[1] == 'save':
