@@ -10,6 +10,7 @@ from pytz import timezone
 from datetime import datetime, timedelta
 from time import sleep
 import sqlite3
+import json
 import sys
 from collections import defaultdict
 args = sys.argv
@@ -161,10 +162,12 @@ class CollateralSaver(object):
         plt.close()
         return path, pl_now
 
-    def send_total_pl(self, WEBHOOK_URL, since):
+    def send_total_pl(self, WEBHOOK_URL, since, PL_SERVER_URL, USER_NAME):
         path, pl_now = self.save_graph(since=since)
         payload = {'content': f'PL now({str(datetime.now(timezone("Asia/Tokyo")))}): {pl_now}'}
         requests.post(WEBHOOK_URL, data=payload)
+        # 損益DBにPOST
+        requests.post(PL_SERVER_URL, data=json.dumps({"total_pl": pl_now, "user_name": USER_NAME}))
 
     def send_to_discord(self, WEBHOOK_URL, since):
         path, pl_now = self.save_graph(since=since)
@@ -176,21 +179,22 @@ class CollateralSaver(object):
 if __name__ == '__main__':
     contest_start = config.CONTEST_START
     WEBHOOK_URL = config.WEBHOOK_URL
+    USER_NAME = config.USER_NAME
+    PL_SERVER_URL = config.PL_SERVER_URL
     funding_currencies = config.FUNDING_CURRENCIES
     key = config.KEY
     secret = config.SECRET
     file_dir = os.path.dirname(os.path.abspath(__file__))
     saver = CollateralSaver(key, secret, file_dir, funding_currencies=funding_currencies)
     today = datetime.now(timezone('Asia/Tokyo')).date()
-    TODAY = timezone('Asia/Tokyo').localize(
-        datetime(year=today.year, month=today.month, day=today.day, hour=0, minute=0))
+    TODAY = timezone('Asia/Tokyo').localize(datetime(year=today.year, month=today.month, day=today.day, hour=0, minute=0))
     if args[1] == 'save':
        saver.save()
     if args[1] == 'realtime_describe':
         saver.describe_continually(30)
     if args[1] == 'send_discord':
         saver.send_to_discord(WEBHOOK_URL, since=TODAY)
-        saver.send_total_pl(WEBHOOK_URL, contest_start)
+        saver.send_total_pl(WEBHOOK_URL, contest_start, PL_SERVER_URL,  USER_NAME)
     if args[1] == 'today':
         fig = plt.figure(figsize=(16, 8))
         data_df = saver.get_df_from_db(start_dt=TODAY)
