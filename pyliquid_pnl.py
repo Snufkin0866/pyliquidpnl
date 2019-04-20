@@ -162,12 +162,13 @@ class CollateralSaver(object):
         plt.close()
         return path, pl_now
 
-    def send_total_pl(self, WEBHOOK_URL, since, PL_SERVER_URL, USER_NAME):
-        path, pl_now = self.save_graph(since=since)
-        payload = {'content': f'PL now({str(datetime.now(timezone("Asia/Tokyo")))}): {pl_now}'}
+    def send_total_pl(self, WEBHOOK_URL, since, PL_SERVER_URL, USER_NAME, INITIAL_CAPITAL):
+        present_capital = self.get_collateral()[2]
+        pl_now = present_capital - INITIAL_CAPITAL
+        payload = {'content': f'Total PL({str(datetime.now(timezone("Asia/Tokyo")))}): {pl_now}'}
         requests.post(WEBHOOK_URL, data=payload)
         # 損益DBにPOST
-        requests.post(PL_SERVER_URL, data=json.dumps({"total_pl": pl_now, "user_name": USER_NAME}))
+        requests.post(PL_SERVER_URL, data=json.dumps({"initial_capital": INITIAL_CAPITAL, "present_capital": present_capital, "user_name": USER_NAME}))
 
     def send_to_discord(self, WEBHOOK_URL, since):
         path, pl_now = self.save_graph(since=since)
@@ -180,6 +181,7 @@ if __name__ == '__main__':
     contest_start = config.CONTEST_START
     WEBHOOK_URL = config.WEBHOOK_URL
     USER_NAME = config.USER_NAME
+    INITIAL_CAPITAL = config.INITIAL_CAPITAL
     PL_SERVER_URL = config.PL_SERVER_URL
     funding_currencies = config.FUNDING_CURRENCIES
     key = config.KEY
@@ -194,7 +196,7 @@ if __name__ == '__main__':
         saver.describe_continually(30)
     if args[1] == 'send_discord':
         saver.send_to_discord(WEBHOOK_URL, since=TODAY)
-        saver.send_total_pl(WEBHOOK_URL, contest_start, PL_SERVER_URL,  USER_NAME)
+        saver.send_total_pl(WEBHOOK_URL, contest_start, PL_SERVER_URL, USER_NAME, INITIAL_CAPITAL)
     if args[1] == 'today':
         fig = plt.figure(figsize=(16, 8))
         data_df = saver.get_df_from_db(start_dt=TODAY)

@@ -5,6 +5,7 @@ from pytz import timezone
 CONTEST_START = timezone('Asia/Tokyo').localize(
     datetime(year=2019, month=4, day=15, hour=0, minute=0))
 USER_NAME = "hoge"
+INITIAL_CAPITAL = 10000
 WEBHOOK_URL = "hogehoge"
 PL_SERVER_URL = 'http://hoge'
 KEY = "hugahuga"
