@@ -111,7 +111,7 @@ class CollateralSaver(object):
             plt.pause(interval)
             plt.clf()
 
-    def describe_graph(self, data_df, open_position=True):
+    def describe_graph(self, data_df, open_position=False):
         plt.title("The capital curve")
         plt.xlabel("Date")
         plt.ylabel("PL(JPY)")
@@ -127,10 +127,8 @@ class CollateralSaver(object):
             ax1.legend(loc='lower right')
         else:
             ax0 = plt.subplot(111)
-            ax0.plot(data_df.index, data_df['total_unrealized_margin'] - data_df['total_realized_margin']
-                     [0], color='r', label='total_unrealized_pnl')
-            ax0.plot(data_df.index, data_df['total_margin'] -
-                     data_df['total_margin'][0], color='b', label='total_realized_pnl')
+            ax0.plot(data_df.index, data_df['total_unrealized_margin'] - data_df['total_unrealized_margin'][0], color='r', label='total_unrealized_pnl')
+            ax0.plot(data_df.index, data_df['total_margin'] - data_df['total_margin'][0], color='b', label='total_realized_pnl')
             ax0.legend()
         return data_df['total_unrealized_margin'][-1] - data_df['total_unrealized_margin'][0]
 
