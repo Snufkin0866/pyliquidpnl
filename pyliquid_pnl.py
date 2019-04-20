@@ -79,6 +79,10 @@ class CollateralSaver(object):
     def get_collateral(self):
         date = datetime.now().astimezone(timezone('Asia/Tokyo'))
         accounts = self.api.get_trading_accounts()
+        crypto_accounts = self.api.get_crypto_account()
+        #print(crypto_accounts)
+        #print("="*50)
+        #print(accounts)
         float_none = lambda x: float(0) if x is None else float(x)
         int_none = lambda x: int(0) if x is None else int(x)
         present_prices = {p['currency_pair_code']: float_none(p['last_traded_price']) for p in self.api.get_products() if int_none(p["volume_24h"] != 0)}
@@ -86,18 +90,30 @@ class CollateralSaver(object):
         margin = 0
         free_margin = 0
         for a in accounts:
-            if a['funding_currency'] not in self.funding_currencies:
-                continue
             if self.funding_currencies[a['funding_currency']]:
                 if a['funding_currency'] == 'JPY':
                     present_price = 1
                 else:
-                    present_price = present_prices[a['funding_currency']+'JPY']
+                    present_price = present_prices[a['funding_currency'] + 'JPY']
+                print(f"Currency:{a['funding_currency']}, Total Margin: {float(a['margin'])+float(a['free_margin'])-float(a['pnl'])}, Unrealized Margin: {float(a['margin'])+float(a['free_margin'])}, Open PnL: {a['pnl']}")
                 open_pnl += float(a['pnl']) * present_price
                 margin += float(a['margin']) * present_price
                 free_margin += float(a['free_margin']) * present_price
+        # crypto_accountのcurrencyがself.funding_currenciesにあって，かつ
+        # trading_accountsのfunding_currencyにない場合はcrypto_accountの
+        # 残高をtotal_marginに含める．
+        trading_currencies = [a['funding_currency'] for a in accounts]
+        for a in crypto_accounts:
+            if self.funding_currencies[a['currency']]:
+                if not a['currency'] in trading_currencies:
+                    present_price = present_prices[a['currency'] + 'JPY']
+                    print(
+                        f"Currency:{a['currency']}, Balance: {a['balance']}, Balance in JPY: {float(a['balance'])*present_price}")
+                    open_pnl += float(a['balance']) * present_price
+                    free_margin += float(a['balance']) * present_price
         total_unrealized_margin = margin + free_margin
         total_margin = margin + free_margin - open_pnl
+        print(f'Total margin: {total_margin}, Total unrealized margin: {total_unrealized_margin}')
         return date, open_pnl, total_unrealized_margin, total_margin
 
     def describe_continually(self, interval):
