@@ -10,6 +10,7 @@
 - python versionは3系です．特別なライブラリは必要ありませんが，pyliquidが必要です．
 - pyliquid.pyと同じディレクトリに置いてください．
 pyliquid→https://github.com/Snufkin0866/pyliquid
+ccxt版を使う場合はpyliquidは必要ありません．→https://github.com/gokoro/pyliquidpnl-ccxt
 - config_sample.pyをリネームしたconfig.pyにAPI情報と，Discordの損益部屋で取得したWEBHOOKURLを入力してください．なお，WEBHOOKの名前は参加者様の名前と
 同じ名前でお願いします．また，configの各設定項目の説明はconfig.py内にコメントアウトして書いてあります．
 - **configのUSER_NAMEはTwitter IDと同じものにしてください．なお，@はなしでお願いします．これを違う名前にすると，トータルの損益が記録されません．**
