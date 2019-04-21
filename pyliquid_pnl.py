@@ -89,7 +89,10 @@ class CollateralSaver(object):
         open_pnl = 0
         margin = 0
         free_margin = 0
+        counted_currencies = defaultdict(bool)
+        print(accounts)
         for a in accounts:
+            counted_currencies[a['funding_currency']] = True
             if self.funding_currencies[a['funding_currency']]:
                 if a['funding_currency'] == 'JPY':
                     present_price = 1
@@ -98,7 +101,10 @@ class CollateralSaver(object):
                 print(f"Currency:{a['funding_currency']}, Total Margin: {float(a['margin'])+float(a['free_margin'])-float(a['pnl'])}, Unrealized Margin: {float(a['margin'])+float(a['free_margin'])}, Open PnL: {a['pnl']}")
                 open_pnl += float(a['pnl']) * present_price
                 margin += float(a['margin']) * present_price
-                free_margin += float(a['free_margin']) * present_price
+                if counted_currencies[a['funding_currency']]:
+                    continue
+                else:
+                    free_margin += float(a['free_margin']) * present_price
         # crypto_accountのcurrencyがself.funding_currenciesにあって，かつ
         # trading_accountsのfunding_currencyにない場合はcrypto_accountの
         # 残高をtotal_marginに含める．
