@@ -33,3 +33,9 @@ python pyliquid_pnl.py send_discord
 */2 * * * * ~/anaconda3/bin/python ~/pyliquidpnl/pyliquid_pnl.py save
 45 23 * * * ~/anaconda3/bin/python ~/pyliquidpnl/pyliquid_pnl.py send_discord
 ```
+
+- cronを使うのが難しい人向け
+マウジーさん(@jassie0406)が作ってくださったcron_pnl.pyを動かせば，configの設定だけで動きます．必要なライブラリなどは各位インストールしてください．python3のパスが通っている前提です．
+
+- INIAIAL_CAPITAL計算スクリプトについて．
+Oneさん（@One619hebotter）が作ってくださったcalc_INITIAL_CAPITAL.pyを動かすと，自動で初期資金を計算してくれます．なお，このスクリプトを動かすとJPY, USD, BTC, ETH, XRP, QASH, BCHの日本円時価合計額が出てきます．
