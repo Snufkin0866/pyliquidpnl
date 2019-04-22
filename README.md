@@ -9,9 +9,11 @@
 - 使い方はそれほど難しくありません．やることは大きく分けて，1. configファイルの編集2. cronの設定．（cronでなくても定時実行できればなんでも良い）です．
 - python versionは3系です．特別なライブラリは必要ありませんが，pyliquidが必要です．
 - pyliquid.pyと同じディレクトリに置いてください．
+pyliquid→https://github.com/Snufkin0866/pyliquid
+ccxt版を使う場合はpyliquidは必要ありません．→https://github.com/gokoro/pyliquidpnl-ccxt
 - config_sample.pyをリネームしたconfig.pyにAPI情報と，Discordの損益部屋で取得したWEBHOOKURLを入力してください．なお，WEBHOOKの名前は参加者様の名前と
 同じ名前でお願いします．また，configの各設定項目の説明はconfig.py内にコメントアウトして書いてあります．
-- configのUSER_NAMEはTwitter IDと同じものにしてください．
+- **configのUSER_NAMEはTwitter IDと同じものにしてください．なお，@はなしでお願いします．これを違う名前にすると，トータルの損益が記録されません．**
 - configのFUNDINC_CURRENCIESにはレバレッジ取引オンリーの場合，JPY以外False，BTCJPYの現物取引の場合はBTCとJPY以外をFalse，それ以外の例えばQashを証拠金として扱う場合には，該当する通貨をTrueにしてください．また，アルト現物を扱う場合はconfigのFUNDINC_CURRENCIESにその通貨を追加してください.
 例：BCH: True
 - pyliquid_pnl.pyがあるディレクトリにdataというディレクトリを作ってください．
