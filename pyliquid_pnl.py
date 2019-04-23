@@ -185,7 +185,7 @@ class CollateralSaver(object):
     def send_total_pl(self, WEBHOOK_URL, since, PL_SERVER_URL, USER_NAME, INITIAL_CAPITAL):
         present_capital = self.get_collateral()[2]
         pl_now = present_capital - INITIAL_CAPITAL
-        payload = {'content': f'Total PL({str(datetime.now(timezone("Asia/Tokyo")))}): {pl_now}'}
+        payload = {'content': f'Total PL from {since}({str(datetime.now(timezone("Asia/Tokyo")))}): {round(pl_now,3)}'}
         requests.post(WEBHOOK_URL, data=payload)
         # 損益DBにPOST
         requests.post(PL_SERVER_URL, data=json.dumps({"initial_capital": INITIAL_CAPITAL, "present_capital": present_capital, "user_name": USER_NAME}))
