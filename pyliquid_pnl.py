@@ -90,7 +90,6 @@ class CollateralSaver(object):
         margin = 0
         free_margin = 0
         counted_currencies = defaultdict(bool)
-        print(accounts)
         for a in accounts:
             if self.funding_currencies[a['funding_currency']]:
                 if a['funding_currency'] == 'JPY':
@@ -139,7 +138,7 @@ class CollateralSaver(object):
         plt.ylabel("PL(JPY)")
         if open_position:
             ax0 = plt.subplot(211)
-            ax0.plot(data_df.index, data_df['total_unrealized_margin'] - data_df['total_unrealized_margin']
+            ax0.plot(data_df.index, data_df['total_unrealized_margin'] - data_df['total_margin']
                     [0], color='r', label='total_unrealized_pnl')
             ax0.plot(data_df.index, data_df['total_margin'] -
                     data_df['total_margin'][0], color='b', label='total_realized_pnl')
