@@ -5,7 +5,7 @@ from pytz import timezone
 CONTEST_START = timezone('Asia/Tokyo').localize(
     datetime(year=2019, month=4, day=15, hour=0, minute=0))
 INITIAL_CAPITAL = 10000 # 大会の初期資金．現物を初期資金に含める場合は，JPY+現物の大会開始時の時価
-USER_NAME = "hoge" # 参加者の名前．わかりやすいもの．
+USER_NAME = "hoge" # 参加者の名前．@なしのTwitterIDを使用してください．
 PL_SERVER_URL = 'http://hoge' # 大会参加者用部屋で案内します．
 WEBHOOK_URL = "hogehoge" # ご自身で設定した損益通知部屋のwebhookのURL
 KEY = "hugahuga" # LiquidのAPIキー
