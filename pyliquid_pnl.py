@@ -24,7 +24,7 @@ register_matplotlib_converters()
 import seaborn as sns
 sns.set()
 
-import pyliquid
+from pyliquid import pyliquid
 import config
 
 
