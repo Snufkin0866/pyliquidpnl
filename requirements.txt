@@ -1,0 +1,4 @@
+pandas
+PyJWT
+matplotlib
+seaborn
