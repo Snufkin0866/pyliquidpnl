@@ -1,0 +1,3 @@
+[submodule "pyliquid"]
+	path = pyliquid
+	url = https://github.com/Snufkin0866/pyliquid.git
