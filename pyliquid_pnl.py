@@ -86,6 +86,7 @@ class CollateralSaver(object):
         float_none = lambda x: float(0) if x is None else float(x)
         int_none = lambda x: int(0) if x is None else int(x)
         present_prices = {p['currency_pair_code']: float_none(p['last_traded_price']) for p in self.api.get_products() if int_none(p["volume_24h"] != 0)}
+        present_prices['USDJPY'] = present_prices['BTCJPY'] / present_prices['BTCUSD']
         open_pnl = 0
         margin = 0
         free_margin = 0
